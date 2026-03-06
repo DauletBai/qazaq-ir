@@ -1,0 +1,24 @@
+{
+  "name": "qazaq-ir",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">   <img src=\"./assets/shanraq_neuron.svg\" alt=\"Qazaq IR Logo: The Shanraq Neuron\" width=\"250\"/> </p>",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vitepress dev docs", "docs:build": "vitepress build docs", "docs:serve": "vitepress serve docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qazaq-ai/qazaq-ir.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/qazaq-ai/qazaq-ir/issues"
+  },
+  "homepage": "https://github.com/qazaq-ai/qazaq-ir#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
