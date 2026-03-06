@@ -1,83 +1,47 @@
+pub mod api;
 pub mod execution_engine;
 pub mod mempool;
 pub mod state;
 
+use api::{AppState, create_router};
 use colored::*;
 use execution_engine::ExecutionEngine;
 use mempool::TransactionPool;
 use state::State;
-use std::fs;
-use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
+use tokio::net::TcpListener;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!(
         "{}",
-        "=== Orda Node (Post-Quantum Blockchain) ===".bold().cyan()
-    );
-    println!(
-        "{}",
-        "Initializing Genesis State and Mempool...".bold().black()
+        "=== Orda Node (Post-Quantum API Gateway) ===".bold().cyan()
     );
 
-    let mut state = State::new();
-    let mut mempool = TransactionPool::new();
+    // Initialize Global State
+    let state = Arc::new(Mutex::new(State::new()));
+    let mempool = Arc::new(Mutex::new(TransactionPool::new()));
 
-    // In a real blockchain, this would be an API server receiving REST/RPC calls.
-    let intent_file = PathBuf::from("crates/qazaq-ir/examples/01_pqc_transaction.json");
-
-    println!(
-        "\n{} Receiving raw AI-generated payload from P2P network...",
-        "»".yellow()
-    );
-
-    let raw_payload = fs::read_to_string(&intent_file).unwrap_or_else(|_| {
-        eprintln!("Failed to read simulated payload file.");
-        std::process::exit(1);
+    // Spawn the Execution Engine on a background thread
+    let execution_mempool = mempool.clone();
+    let execution_state = state.clone();
+    tokio::spawn(async move {
+        ExecutionEngine::run_loop(execution_mempool, execution_state).await;
     });
 
+    // Package the state for the Router
+    let app_state = AppState { mempool, state };
+
+    let app = create_router(app_state);
+
+    let addr = "127.0.0.1:3000";
+    let listener = TcpListener::bind(addr).await.unwrap();
+
     println!(
-        "{} Routing payload through Qazaq IR Mathematical Validation...",
-        "»".yellow()
+        "{} TCP Listener Started. Awaiting P2P Intents on {}...",
+        "»".yellow(),
+        addr.bold().green()
     );
 
-    // Mempool attempts to process the raw string intent
-    match mempool.process_incoming_intent(&raw_payload) {
-        Ok(_) => {
-            println!(
-                "{} Transaction intent mathematically verified in O(1) time.",
-                "SUCCESS:".green().bold()
-            );
-            println!(
-                "{} Explicit SignWithMLDSA cryptographic suffix proven.",
-                "SUCCESS:".green().bold()
-            );
-            println!(
-                "{} Current Unconfirmed Txs: {}",
-                "»".cyan(),
-                mempool.unconfirmed_count()
-            );
-        }
-        Err(e) => {
-            eprintln!("{} {}", "NODE REJECT:".red().bold(), e);
-        }
-    }
-
-    // Now test a hallucination
-    println!(
-        "\n{} Simulating hostile hallucinated payload...",
-        "»".yellow()
-    );
-    let hostile_file = PathBuf::from("crates/qazaq-ir/examples/02_fatal_hallucination.json");
-    if let Ok(hostile_payload) = fs::read_to_string(&hostile_file) {
-        match mempool.process_incoming_intent(&hostile_payload) {
-            Ok(_) => println!("Uh oh. Hallucination bypassed protection."),
-            Err(e) => {
-                println!("{} {}", "DEFENDED:".green().bold(), e);
-                println!("Node state is pure. Hallucination blocked at the IR layer.");
-            }
-        }
-    }
-
-    // Finally, execute verified transactions
-    ExecutionEngine::execute_mempool(&mut mempool, &mut state);
+    axum::serve(listener, app).await.unwrap();
 }

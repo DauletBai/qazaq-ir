@@ -3,47 +3,55 @@ use crate::state::State;
 use colored::Colorize;
 use qazaq_ir::{AgglutinativeToken, RootEntity, SuffixMorpheme};
 
+use std::sync::{Arc, Mutex};
+use tokio::time::{Duration, sleep};
+
 /// The execution layer strictly responsible for draining the Transaction Pool
 /// and applying deterministic actions to the unified State Machine.
 pub struct ExecutionEngine;
 
 impl ExecutionEngine {
-    /// Executes all confirmed, PQC-signed intents currently deposited in the Mempool
-    pub fn execute_mempool(mempool: &mut TransactionPool, state: &mut State) {
-        let tokens: Vec<AgglutinativeToken> = mempool.drain_all();
+    /// Placed on a background `tokio::spawn` task, endlessly drains the mempool
+    pub async fn run_loop(mempool: Arc<Mutex<TransactionPool>>, state: Arc<Mutex<State>>) {
+        loop {
+            // Scope the lock to drop immediately after draining so the API can write concurrently
+            let tokens = {
+                let mut pool = mempool.lock().unwrap();
+                pool.drain_all()
+            };
 
-        if tokens.is_empty() {
-            println!(
-                "{}",
-                "[-] Execution Engine: No pending transactions.".dimmed()
-            );
-            return;
-        }
-
-        println!(
-            "\n{}",
-            "=== Execution Engine: Initializing Block Processing ==="
-                .bold()
-                .blue()
-        );
-
-        let mut successful_txs = 0;
-
-        for token in tokens {
-            if Self::execute_token(&token, state) {
-                successful_txs += 1;
+            if tokens.is_empty() {
+                // Sleep to avoid CPU hogging when Mempool is empty
+                sleep(Duration::from_millis(500)).await;
+                continue;
             }
-        }
 
-        println!(
-            "\n{}",
-            format!(
-                "=== Execution Engine: Processed {} Transactions ===",
-                successful_txs
-            )
-            .bold()
-            .green()
-        );
+            println!(
+                "\n{}",
+                "=== Execution Engine: Initializing Block Processing ==="
+                    .bold()
+                    .blue()
+            );
+
+            let mut successful_txs = 0;
+            let mut state_lock = state.lock().unwrap();
+
+            for token in tokens {
+                if Self::execute_token(&token, &mut state_lock) {
+                    successful_txs += 1;
+                }
+            }
+
+            println!(
+                "\n{}",
+                format!(
+                    "=== Execution Engine: Processed {} Transactions ===",
+                    successful_txs
+                )
+                .bold()
+                .green()
+            );
+        }
     }
 
     /// Parses and directly executes a single Qazaq IR morphological sequence in O(1) time.

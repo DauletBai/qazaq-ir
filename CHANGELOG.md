@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-03-06
+
+### Added
+- **Async API Gateway**: Orda Node now acts as a native P2P listener via `tokio` and `axum`.
+- **Thread-Safe Architecture**: The `State` and `TransactionPool` structures were refactored behind `Arc<Mutex<T>>` wrappers to allow parallel ownership between the API layer and the background execution loop.
+- **REST Endpoints**: `POST /intent` accepts real AI router payloads, while `GET /balance/{address}` directly queries the $\mathcal{O}(1)$ executed global state.
+
 ## [0.4.0] - 2026-03-06
 
 ### Added
