@@ -1,1 +1,13 @@
-/target
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Node & Vitepress Documentation
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
+# Env & OS
+.env
+.DS_Store
