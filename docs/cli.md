@@ -45,7 +45,7 @@ Running the compiler:
 ```bash
 $ qazaqc intent.json --emit llvm -o tx.ll
 
-=== Qazaq IR Compiler (qazaqc) v0.2.0 ===
+=== Qazaq IR Compiler (qazaqc) v0.3.0 ===
 
 Input Payload: intent.json
 Emitting to: Llvm Target
@@ -67,7 +67,7 @@ Attempting to compile an invalid LLM hallucination (such as writing data *before
 ```bash
 $ qazaqc examples/02_fatal_hallucination.json --emit llvm -o test.ll
 
-=== Qazaq IR Compiler (qazaqc) v0.2.0 ===
+=== Qazaq IR Compiler (qazaqc) v0.3.0 ===
 
 Input Payload: examples/02_fatal_hallucination.json
 Emitting to: Llvm Target

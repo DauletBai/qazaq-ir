@@ -9,7 +9,7 @@ use std::time::Instant;
 /// Deterministic O(1) compiler for Sovereign AI & Hallucination-Free Code Generation.
 #[derive(Parser, Debug)]
 #[command(name = "qazaqc")]
-#[command(version = "0.2.0")]
+#[command(version = "0.3.0")]
 #[command(about = "Compiles Qazaq IR JSON intents into executable representations without hidden context.", long_about = None)]
 struct Cli {
     /// Path to the input JSON file containing the Intent Payload
@@ -49,7 +49,7 @@ fn main() {
 
     println!(
         "\n{}\n",
-        "=== Qazaq IR Compiler (qazaqc) v0.2.0 ===".bold().cyan()
+        "=== Qazaq IR Compiler (qazaqc) v0.3.0 ===".bold().cyan()
     );
     println!("{} {}", "Input Payload:".bold(), input_path.display());
     println!("{} {:?} Target", "Emitting to:".bold(), emit_target);

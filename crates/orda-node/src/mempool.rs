@@ -2,15 +2,14 @@ use qazaq_ir::{AgglutinativeToken, RouterError, SemanticRouter, SuffixMorpheme};
 
 /// The Simulated Transaction Pool (Mempool) for Orda Node.
 /// Stores mathematically validated and zero-context protected intents.
+#[derive(Default)]
 pub struct TransactionPool {
     verified_transactions: Vec<AgglutinativeToken>,
 }
 
 impl TransactionPool {
     pub fn new() -> Self {
-        Self {
-            verified_transactions: Vec::new(),
-        }
+        Self::default()
     }
 
     /// Processes an incoming raw JSON intent received from an external DApp/LLM client.

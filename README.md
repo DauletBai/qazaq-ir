@@ -28,7 +28,7 @@ Use the included example to generate mathematically validated LLVM IR for a Post
 ```bash
 $ cargo run --bin qazaqc -- examples/01_pqc_transaction.json --output test.ll --emit llvm
 
-=== Qazaq IR Compiler (qazaqc) v0.2.0 ===
+=== Qazaq IR Compiler (qazaqc) v0.3.0 ===
 
 Input Payload: examples/01_pqc_transaction.json
 Emitting to: Llvm Target
@@ -46,7 +46,7 @@ Attempting to compile an invalid LLM hallucination (e.g. writing data *before* a
 ```bash
 $ cargo run --bin qazaqc -- examples/02_fatal_hallucination.json --output test.ll --emit llvm
 
-=== Qazaq IR Compiler (qazaqc) v0.2.0 ===
+=== Qazaq IR Compiler (qazaqc) v0.3.0 ===
 
 Input Payload: examples/02_fatal_hallucination.json
 Emitting to: Llvm Target
