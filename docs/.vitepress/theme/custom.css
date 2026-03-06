@@ -47,3 +47,12 @@ Symbolizes the heartbeat, moving blood, and a living, deterministic artificial i
     margin: 0 auto !important;
   }
 }
+
+/* Override hardcoded Vitepress text width limit to allow text to breathe */
+@media (min-width: 640px) {
+
+  .VPHero .text,
+  .VPHero .name {
+    max-width: max-content !important;
+  }
+}
