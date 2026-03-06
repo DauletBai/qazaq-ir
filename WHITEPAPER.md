@@ -14,9 +14,9 @@ By transitioning LLM code generation protocols to compile intent into Qazaq IR b
 
 The foundational architecture of contemporary Large Language Models (LLMs) relies entirely on the Self-Attention mechanism, mathematically formalized as:
 
-$$ Attention(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V $$
+Attention(Q, K, V) = Softmax((Q * K^T) / sqrt(d_k)) * V
 
-At the core of this formulation is the multiplication of the Query ($Q$) and Key ($K$) matrices. This operation requires the neural network to calculate an interactive similarity score for every possible pair of tokens within a sequence. Consequently, the computational complexity and memory footprint of the attention mechanism scale quadratically with the sequence length, dictating a hard O(n^2) constraint. While the industry has temporarily masked this inefficiency through massive hardware acceleration, this quadratic scaling imposes strict physical, economic, and thermodynamic limits on context windows.
+At the core of this formulation is the multiplication of the Query (Q) and Key (K) matrices. This operation requires the neural network to calculate an interactive similarity score for every possible pair of tokens within a sequence. Consequently, the computational complexity and memory footprint of the attention mechanism scale quadratically with the sequence length, dictating a hard O(n^2) constraint. While the industry has temporarily masked this inefficiency through massive hardware acceleration, this quadratic scaling imposes strict physical, economic, and thermodynamic limits on context windows.
 
 Why did AI pioneers engineer such a computationally punishing mechanism? The root cause is not an unavoidable law of computer science, but a legacy constraint of human linguistics. Modern programming languages (e.g., Python, C++, Rust) and their associated syntactic structures are fundamentally anchored to the logic of English, an *analytical* language. In analytical languages, an isolated token is semantically hollow. Its exact meaning, function, and scope are dictated almost entirely by syntax, sequential word order, and invisible surrounding context. 
 
