@@ -36,7 +36,14 @@ export default defineConfig({
         text: 'Core Engine (Реализация)',
         items: [
           { text: 'O(1) Bitwise Validation', link: '/core-engine' },
-          { text: 'Semantic Router', link: '/semantic-router' }
+          { text: 'Semantic Router', link: '/semantic-router' },
+          { text: 'Post-Quantum PQC Engine', link: '/pqc' }
+        ]
+      },
+      {
+        text: 'Tooling (Инструменты)',
+        items: [
+          { text: 'CLI Compiler (qazaqc)', link: '/cli' }
         ]
       }
     ],
