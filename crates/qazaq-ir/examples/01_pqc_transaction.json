@@ -2,8 +2,8 @@
     "tokens": [
         {
             "root": {
-                "type": "StateObject",
-                "value": "Transaction"
+                "type": "MemoryPointer",
+                "value": 1
             },
             "morphs": [
                 "AllocHeap",

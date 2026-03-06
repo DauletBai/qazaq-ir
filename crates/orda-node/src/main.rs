@@ -1,7 +1,11 @@
+pub mod execution_engine;
 pub mod mempool;
+pub mod state;
 
 use colored::*;
+use execution_engine::ExecutionEngine;
 use mempool::TransactionPool;
+use state::State;
 use std::fs;
 use std::path::PathBuf;
 
@@ -15,13 +19,14 @@ fn main() {
         "Initializing Genesis State and Mempool...".bold().black()
     );
 
+    let mut state = State::new();
     let mut mempool = TransactionPool::new();
 
     // In a real blockchain, this would be an API server receiving REST/RPC calls.
     let intent_file = PathBuf::from("crates/qazaq-ir/examples/01_pqc_transaction.json");
 
     println!(
-        "{} Receiving raw AI-generated payload from P2P network...",
+        "\n{} Receiving raw AI-generated payload from P2P network...",
         "»".yellow()
     );
 
@@ -72,4 +77,7 @@ fn main() {
             }
         }
     }
+
+    // Finally, execute verified transactions
+    ExecutionEngine::execute_mempool(&mut mempool, &mut state);
 }

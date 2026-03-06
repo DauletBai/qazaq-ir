@@ -44,4 +44,9 @@ impl TransactionPool {
     pub fn unconfirmed_count(&self) -> usize {
         self.verified_transactions.len()
     }
+
+    /// Extracs and empties the transaction pool for Engine execution
+    pub fn drain_all(&mut self) -> Vec<AgglutinativeToken> {
+        std::mem::take(&mut self.verified_transactions)
+    }
 }
