@@ -26,7 +26,6 @@ impl SemanticRouter {
         })?;
 
         // 2. Deterministic Validation: Send strictly typed structs to the O(1) QazaqLexer pipeline
-        QazaqLexer::validate_tokens(payload.tokens)
-            .map_err(|e| RouterError::HallucinationDetected(e))
+        QazaqLexer::validate_tokens(payload.tokens).map_err(RouterError::HallucinationDetected)
     }
 }

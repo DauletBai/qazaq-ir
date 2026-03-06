@@ -34,53 +34,45 @@ impl CodegenBackend {
         for suffix in &token.morphs {
             match suffix {
                 SuffixMorpheme::AllocHeap => {
-                    emit_buffer.push_str(&format!(
-                        "// [Suffix] AllocHeap: Reserving contiguous memory\n"
-                    ));
+                    emit_buffer.push_str("// [Suffix] AllocHeap: Reserving contiguous memory\n");
                     emit_buffer.push_str(&format!(
                         "let mut {} = allocate_heap_memory(1024);\n",
                         root_var_name
                     ));
                 }
                 SuffixMorpheme::MakeMutable => {
-                    emit_buffer.push_str(&format!(
-                        "// [Suffix] MakeMutable: Opening execution lifecycle\n"
-                    ));
+                    emit_buffer.push_str("// [Suffix] MakeMutable: Opening execution lifecycle\n");
                     emit_buffer.push_str(&format!("{}.make_mutable();\n", root_var_name));
                 }
                 SuffixMorpheme::SignWithMLDSA => {
-                    emit_buffer.push_str(&format!(
-                        "// [Suffix] SignWithMLDSA: Executing Post-Quantum Crypto Signature\n"
-                    ));
+                    emit_buffer.push_str(
+                        "// [Suffix] SignWithMLDSA: Executing Post-Quantum Crypto Signature\n",
+                    );
                     emit_buffer.push_str(&format!(
                         "let signature = orda_pqc::mldsa_sign(&{});\n",
                         root_var_name
                     ));
                 }
                 SuffixMorpheme::WriteToTarget => {
-                    emit_buffer.push_str(&format!(
-                        "// [Suffix] WriteToTarget: Committing deterministic state\n"
-                    ));
+                    emit_buffer
+                        .push_str("// [Suffix] WriteToTarget: Committing deterministic state\n");
                     emit_buffer.push_str(&format!("storage_engine::commit(&{});\n", root_var_name));
                 }
                 SuffixMorpheme::StreamData => {
-                    emit_buffer
-                        .push_str(&format!("// [Suffix] StreamData: Opening network stream\n"));
+                    emit_buffer.push_str("// [Suffix] StreamData: Opening network stream\n");
                     emit_buffer.push_str(&format!("net_layer::stream(&{});\n", root_var_name));
                 }
                 SuffixMorpheme::IterateUntilEmpty => {
-                    emit_buffer.push_str(&format!(
-                        "// [Suffix] IterateUntilEmpty: Temporal logic bound\n"
-                    ));
+                    emit_buffer.push_str("// [Suffix] IterateUntilEmpty: Temporal logic bound\n");
                     emit_buffer.push_str(&format!(
                         "while !{}.is_empty() {{\n    // Tick\n}}\n",
                         root_var_name
                     ));
                 }
                 SuffixMorpheme::VerifyConsensus => {
-                    emit_buffer.push_str(&format!(
-                        "// [Suffix] VerifyConsensus: Validating state via network consensus\n"
-                    ));
+                    emit_buffer.push_str(
+                        "// [Suffix] VerifyConsensus: Validating state via network consensus\n",
+                    );
                     emit_buffer.push_str(&format!(
                         "consensus_layer::verify_state(&{});\n",
                         root_var_name
