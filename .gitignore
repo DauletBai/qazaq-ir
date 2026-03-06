@@ -11,3 +11,4 @@ docs/.vitepress/dist/
 # Env & OS
 .env
 .DS_Store
+docs/.vitepress/.temp

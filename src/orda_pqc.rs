@@ -1,6 +1,5 @@
-/// Core Post-Quantum Cryptography Engine for Qazaq IR.
-/// Implements constants and mock interfaces for NIST FIPS 204 (ML-DSA-44).
-
+//! Core Post-Quantum Cryptography Engine for Qazaq IR.
+//! Implements constants and mock interfaces for NIST FIPS 204 (ML-DSA-44).
 pub const ML_DSA_44_PUBLIC_KEY_SIZE: usize = 1312;
 pub const ML_DSA_44_PRIVATE_KEY_SIZE: usize = 2560;
 pub const ML_DSA_44_SIG_SIZE: usize = 2420;
