@@ -1,0 +1,17 @@
+{
+  "tokens": [
+    {
+      "root": {
+        "type": "MemoryPointer",
+        "value": 1
+      },
+      "morphs": [
+        "AllocHeap",
+        {
+          "SignWithMLDSA": "quantum_key"
+        },
+        "WriteToTarget"
+      ]
+    }
+  ]
+}

@@ -18,7 +18,15 @@ impl State {
     pub fn new() -> Self {
         // Initialize or open the Sled database in the `orda_data` directory
         let db = sled::open(Path::new("orda_data")).expect("Failed to open Orda Node Sled DB");
-        Self { db }
+        let mut state = Self { db };
+
+        // Inject Genesis Funds for test script address 1 to allow gas burning
+        let genesis_account = RootEntity::MemoryPointer(1);
+        if state.get_balance(&genesis_account) == 0 {
+            state.add_balance(genesis_account, 10000);
+        }
+
+        state
     }
 
     /// Helper to convert a RootEntity into a unique deterministic byte slice key

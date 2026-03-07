@@ -1,3 +1,4 @@
+use crate::gas::calculate_required_gas;
 use crate::mempool::TransactionPool;
 use crate::state::State;
 use colored::Colorize;
@@ -78,6 +79,25 @@ impl ExecutionEngine {
         // Processing Logic based on Root Type
         match &token.root {
             RootEntity::MemoryPointer(address) => {
+                let required_gas = calculate_required_gas(&token.morphs);
+
+                // Attempt to deduct the calculated gas from the memory pointer's balance
+                if let Err(e) = state.sub_balance(&token.root, required_gas) {
+                    println!(
+                        "    {} Transaction Rejected: Insufficient Gas (Required: {}). {:?}",
+                        "[X]".red(),
+                        required_gas.to_string().yellow(),
+                        e
+                    );
+                    return false;
+                }
+
+                println!(
+                    "    {} Burned {} gas for transaction computation.",
+                    "[-⛽]".magenta(),
+                    required_gas.to_string().yellow()
+                );
+
                 // Example hardcoded execution logic: Mint 100 on valid MemoryPointer transaction
                 let minted_amount = 100;
                 state.add_balance(token.root.clone(), minted_amount);
