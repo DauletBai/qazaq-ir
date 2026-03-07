@@ -16,8 +16,11 @@ impl Default for State {
 
 impl State {
     pub fn new() -> Self {
-        // Initialize or open the Sled database in the `orda_data` directory
-        let db = sled::open(Path::new("orda_data")).expect("Failed to open Orda Node Sled DB");
+        let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+        let db_path = format!("orda_data_{}", port);
+
+        // Initialize or open the Sled database in the dynamic directory
+        let db = sled::open(Path::new(&db_path)).expect("Failed to open Orda Node Sled DB");
         let mut state = Self { db };
 
         // Inject Genesis Funds for test script address 1 to allow gas burning

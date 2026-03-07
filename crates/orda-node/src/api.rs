@@ -15,6 +15,7 @@ use std::sync::{Arc, Mutex};
 pub struct AppState {
     pub mempool: Arc<Mutex<TransactionPool>>,
     pub state: Arc<Mutex<NodeState>>,
+    pub p2p_sender: tokio::sync::mpsc::UnboundedSender<String>, // Async channel to P2P network
 }
 
 /// Initializes the Axum Router with the P2P API Endpoints.
@@ -32,14 +33,26 @@ async fn submit_intent(State(app_state): State<AppState>, body: String) -> impl 
     let mut mempool = app_state.mempool.lock().unwrap();
 
     match mempool.process_incoming_intent(&body) {
-        Ok(_) => (
-            StatusCode::ACCEPTED,
-            format!(
-                "Intent accepted and validated via Qazaq IR. Unconfirmed Tx Count: {}",
-                mempool.unconfirmed_count()
-            ),
-        ),
-        Err(e) => (StatusCode::BAD_REQUEST, format!("Intent Rejected: {}", e)),
+        Ok(_) => {
+            println!("📥 [API] Intent successfully ingested into Mempool.");
+
+            // Broadcast intent to the global P2P network
+            if let Err(e) = app_state.p2p_sender.send(body) {
+                println!("⚠️ [P2P] Failed to send intent to P2P Swarm thread: {}", e);
+            }
+
+            (
+                StatusCode::ACCEPTED,
+                format!(
+                    "Intent accepted and validated via Qazaq IR. Unconfirmed Tx Count: {}",
+                    mempool.unconfirmed_count()
+                ),
+            )
+        }
+        Err(e) => {
+            println!("⚠️ [API] Intent rejected: {}", e);
+            (StatusCode::BAD_REQUEST, format!("Intent Rejected: {}", e))
+        }
     }
 }
 
